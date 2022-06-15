@@ -22,7 +22,6 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
         stripeCustomerId: String,
     ): String {
         var strCustomerId = ""
-        stripeUtils.showProgressDialogStripe(context)
         CoroutineScope(Dispatchers.IO).async {
             if (stripeCustomerId.equals("")) {
                 GlobalScope.launch {
@@ -80,43 +79,36 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                 }
             }
         }.await()
-        stripeUtils.hideProgressDialogStripe()
         return strCustomerId
     }
 
     fun getAddedCardList(context: Context,stripeCustomerId:String): List<StripeUtils.StripeCardData.Data> {
-        stripeUtils.showProgressDialogStripe(context)
         var jsonData = stripeUtils.getAllStripeCard(stripeCustomerId)
         Log.e("---card List----", "getAllStripeCard: " + jsonData)
         var testModel =
             gson.fromJson(jsonData.toString(), StripeUtils.StripeCardData::class.java)
         val cardList = testModel.data
-        stripeUtils.hideProgressDialogStripe()
         return cardList
     }
     suspend fun makeDefaultCardAndGetList(context: Context, cardID:String, stripeCustomerId: String):Boolean{
         var isDefault=false
-        stripeUtils.showProgressDialogStripe(context)
         CoroutineScope(Dispatchers.IO).async {
             isDefault = stripeUtils.updateDefaultcardWithCustomerId(
                 context, cardID,
                 stripeCustomerId
             )
         }.await()
-        stripeUtils.hideProgressDialogStripe()
         return isDefault
     }
 
     suspend fun deleteCard(context: Context, cardID:String, stripeCustomerId: String):Boolean{
         var isDefault=false
-        stripeUtils.showProgressDialogStripe(context)
         CoroutineScope(Dispatchers.IO).async {
             isDefault = stripeUtils.deleteCard(
                 context,
                 stripeCustomerId, cardID
             )
         }.await()
-        stripeUtils.hideProgressDialogStripe()
         return isDefault
     }
 }
