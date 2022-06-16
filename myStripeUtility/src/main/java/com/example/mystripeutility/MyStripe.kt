@@ -56,7 +56,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                 activity.runOnUiThread(Runnable {
                                     Toast.makeText(activity,
                                         "Card successfully added",
-                                        Toast.LENGTH_SHORT)
+                                        Toast.LENGTH_SHORT).show()
                                 })
                             }
                         }
@@ -91,7 +91,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                 activity.runOnUiThread(Runnable {
                                     Toast.makeText(activity,
                                         "Card successfully added",
-                                        Toast.LENGTH_SHORT)
+                                        Toast.LENGTH_SHORT).show()
                                 })
                             }
                         }
