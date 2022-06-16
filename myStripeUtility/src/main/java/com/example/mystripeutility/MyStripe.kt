@@ -10,9 +10,9 @@ import kotlinx.coroutines.*
 
 class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SECRET_KEY: String) {
 
-    val MY_STRIPE_PUBLISHABLE_KEY = STRIPE_PUBLISHABLE_KEY
-    val MY_STRIPE_SECRET_KEY = STRIPE_SECRET_KEY
-    val stripeUtils = StripeUtils(MY_STRIPE_PUBLISHABLE_KEY, MY_STRIPE_SECRET_KEY)
+    private val MY_STRIPE_PUBLISHABLE_KEY = STRIPE_PUBLISHABLE_KEY
+    private val MY_STRIPE_SECRET_KEY = STRIPE_SECRET_KEY
+    private val stripeUtils = StripeUtils(MY_STRIPE_PUBLISHABLE_KEY, MY_STRIPE_SECRET_KEY)
     private val gson = Gson()
     private var isChanged = false
 
@@ -23,7 +23,9 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
         stripeCustomerId: String,
     ): String {
         var strCustomerId = ""
-         stripeUtils.showProgressDialogStripe(activity)
+         activity.runOnUiThread(Runnable {
+             stripeUtils.showProgressDialogStripe(activity)
+         })
         CoroutineScope(Dispatchers.IO).async {
             if (stripeCustomerId.equals("")) {
                 GlobalScope.launch {
@@ -87,7 +89,9 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                 }
             }
         }.await()
-         stripeUtils.hideProgressDialogStripe()
+         activity.runOnUiThread(Runnable {
+             stripeUtils.hideProgressDialogStripe()
+         })
         return strCustomerId
     }
 
