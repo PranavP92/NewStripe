@@ -23,10 +23,11 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
         stripeCustomerId: String,
     ): String {
         var strCustomerId = ""
-         activity.runOnUiThread(Runnable {
-             stripeUtils.showProgressDialogStripe(activity)
-         })
+
         CoroutineScope(Dispatchers.IO).async {
+            activity.runOnUiThread(Runnable {
+                stripeUtils.showProgressDialogStripe(activity)
+            })
             if (stripeCustomerId.equals("")) {
                 GlobalScope.launch {
                     suspend {
@@ -48,6 +49,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                         setPositiveButton("OK",
                                             DialogInterface.OnClickListener { dialogInterface, i ->
                                                 dialogInterface.dismiss()
+                                                return@OnClickListener
                                             })
                                     }
                                 })
@@ -78,6 +80,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                         setPositiveButton("OK",
                                             DialogInterface.OnClickListener { dialogInterface, i ->
                                                 dialogInterface.dismiss()
+                                                return@OnClickListener
                                             })
                                     }
                                 })
@@ -95,33 +98,53 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
         return strCustomerId
     }
 
-    fun getAddedCardList(context: Context,stripeCustomerId:String): List<StripeUtils.StripeCardData.Data> {
+    fun getAddedCardList(activity: Activity,stripeCustomerId:String): List<StripeUtils.StripeCardData.Data> {
+        activity.runOnUiThread(Runnable {
+            stripeUtils.showProgressDialogStripe(activity)
+        })
         var jsonData = stripeUtils.getAllStripeCard(stripeCustomerId)
         Log.e("---card List----", "getAllStripeCard: " + jsonData)
         var testModel =
             gson.fromJson(jsonData.toString(), StripeUtils.StripeCardData::class.java)
         val cardList = testModel.data
+        activity.runOnUiThread(Runnable {
+            stripeUtils.hideProgressDialogStripe()
+        })
         return cardList
     }
-    suspend fun makeDefaultCardAndGetList(context: Context, cardID:String, stripeCustomerId: String):Boolean{
+    suspend fun makeDefaultCardAndGetList(activity: Activity, cardID:String, stripeCustomerId: String):Boolean{
         var isDefault=false
+
         CoroutineScope(Dispatchers.IO).async {
+            activity.runOnUiThread(Runnable {
+                stripeUtils.showProgressDialogStripe(activity)
+            })
             isDefault = stripeUtils.updateDefaultcardWithCustomerId(
-                context, cardID,
+                activity, cardID,
                 stripeCustomerId
             )
         }.await()
+        activity.runOnUiThread(Runnable {
+            stripeUtils.hideProgressDialogStripe()
+        })
         return isDefault
     }
 
-    suspend fun deleteCard(context: Context, cardID:String, stripeCustomerId: String):Boolean{
+    suspend fun deleteCard(activity: Activity, cardID:String, stripeCustomerId: String):Boolean{
         var isDefault=false
+
         CoroutineScope(Dispatchers.IO).async {
+            activity.runOnUiThread(Runnable {
+                stripeUtils.showProgressDialogStripe(activity)
+            })
             isDefault = stripeUtils.deleteCard(
-                context,
+                activity,
                 stripeCustomerId, cardID
             )
         }.await()
+        activity.runOnUiThread(Runnable {
+            stripeUtils.hideProgressDialogStripe()
+        })
         return isDefault
     }
 }

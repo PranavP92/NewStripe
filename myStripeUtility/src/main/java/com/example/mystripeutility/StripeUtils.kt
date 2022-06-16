@@ -46,6 +46,9 @@ class StripeUtils(
         this.activity = activity
         var customerID: String = ""
         CoroutineScope(Dispatchers.IO).async {
+            activity.runOnUiThread(kotlinx.coroutines.Runnable {
+                showProgressDialogStripe(activity)
+            })
             val tokenId: String = generateCardtoken(activity, card)
             Log.e("----afterscope----", "GenerateCardtoken: " + tokenId)
             tokenGeneratedId = tokenId
@@ -54,13 +57,15 @@ class StripeUtils(
                     customerID = ""
                 } else {
                     val custId = apiCreateCustomerWithUserEmail(email, tokenGeneratedId)
-//                    Log.e("TAG", "custId  >>$custId")
                     if (custId != "") {
                         customerID = custId
                     }
                 }
             }
         }.await()
+        activity.runOnUiThread(kotlinx.coroutines.Runnable {
+            hideProgressDialogStripe()
+        })
 
         return customerID
     }
@@ -69,6 +74,10 @@ class StripeUtils(
     private suspend fun apiCreateCustomerWithUserEmail(email: String, cardToken: String): String {
         var customerID: String = ""
         CoroutineScope(Dispatchers.IO).async {
+
+            activity.runOnUiThread(kotlinx.coroutines.Runnable {
+                showProgressDialogStripe(activity)
+            })
 
             var postBody =
                 "email=$email&source=$cardToken"
@@ -94,6 +103,9 @@ class StripeUtils(
             customerID = Jobject.getString("id")
             Log.e("----customerResponse----", "GeneratCustomerid" + Jobject)
         }.await()
+        activity.runOnUiThread(kotlinx.coroutines.Runnable {
+            hideProgressDialogStripe()
+        })
         return customerID
     }
 
@@ -106,6 +118,9 @@ class StripeUtils(
         this.activity = activity
         var customerID: String = ""
         CoroutineScope(Dispatchers.IO).async {
+            activity.runOnUiThread(kotlinx.coroutines.Runnable {
+                showProgressDialogStripe(activity)
+            })
             val tokenId: String = generateCardtoken(activity, card)
             Log.e("----afterscope----", "GenerateCardtoken: " + tokenId)
             tokenGeneratedId = tokenId
@@ -120,11 +135,15 @@ class StripeUtils(
             }
         }.await()
 
+        activity.runOnUiThread(kotlinx.coroutines.Runnable {
+            hideProgressDialogStripe()
+        })
         return customerID
     }
 
     suspend fun apiCallForAddNewCardWithCustomerID(cardToken: String, stripeCustomerId: String) {
         CoroutineScope(Dispatchers.IO).async {
+
             var URLStripe = base_url + "customers/${stripeCustomerId}/sources";
             var postBody =
                 "source=$cardToken"
