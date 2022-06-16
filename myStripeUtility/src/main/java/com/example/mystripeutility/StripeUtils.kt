@@ -419,6 +419,7 @@ class StripeUtils(
     fun showProgressDialogStripe(context: Context) {
         progressDialog = ProgressDialog(context)
         progressDialog.setTitle("STRIPE")
+        progressDialog.setCancelable(false)
         progressDialog.setMessage("please wait....")
         progressDialog.show()
 

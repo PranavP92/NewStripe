@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.util.Log
+import android.widget.Toast
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 
@@ -44,6 +45,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                     stripeUtils.showAlertDialogForstripe(activity) {
                                         setTitle("STRIPE..!!")
                                         setMessage(stripeUtils.error)
+                                        setCancelable(false)
                                         setPositiveButton("OK",
                                             DialogInterface.OnClickListener { dialogInterface, i ->
                                                 dialogInterface.dismiss()
@@ -51,7 +53,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                     }
                                 })
                             } else {
-
+                                Toast.makeText(activity,"Card successfully added",Toast.LENGTH_SHORT)
                             }
                         }
                     }.invoke()
@@ -74,6 +76,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                     stripeUtils.showAlertDialogForstripe(activity) {
                                         setTitle("STRIPE..!!")
                                         setMessage(stripeUtils.error)
+                                        setCancelable(false)
                                         setPositiveButton("OK",
                                             DialogInterface.OnClickListener { dialogInterface, i ->
                                                 dialogInterface.dismiss()
@@ -81,7 +84,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                     }
                                 })
                             } else {
-
+                                Toast.makeText(activity,"Card successfully added",Toast.LENGTH_SHORT)
                             }
                         }
                     }.invoke()
@@ -105,7 +108,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
         })
         return cardList
     }
-    suspend fun makeDefaultCardAndGetList(activity: Activity, cardID:String, stripeCustomerId: String):Boolean{
+    suspend fun makeDefaultCardAndGetList(activity: Activity, cardID:String, stripeCustomerId: String, checkCallBack: (Boolean) -> Unit){
         var isDefault=false
 
         CoroutineScope(Dispatchers.IO).async {
@@ -120,10 +123,10 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
         activity.runOnUiThread(Runnable {
             stripeUtils.hideProgressDialogStripe()
         })
-        return isDefault
+        checkCallBack(isDefault)
     }
 
-    suspend fun deleteCard(activity: Activity, cardID:String, stripeCustomerId: String):Boolean{
+    suspend fun deleteCard(activity: Activity, cardID:String, stripeCustomerId: String,checkCallBack: (Boolean) -> Unit){
         var isDefault=false
 
         CoroutineScope(Dispatchers.IO).async {
@@ -138,6 +141,6 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
         activity.runOnUiThread(Runnable {
             stripeUtils.hideProgressDialogStripe()
         })
-        return isDefault
+        checkCallBack(isDefault)
     }
 }
