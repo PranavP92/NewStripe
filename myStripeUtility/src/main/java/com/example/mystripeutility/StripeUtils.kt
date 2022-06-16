@@ -75,9 +75,6 @@ class StripeUtils(
         var customerID: String = ""
         CoroutineScope(Dispatchers.IO).async {
 
-            activity.runOnUiThread(kotlinx.coroutines.Runnable {
-                showProgressDialogStripe(activity)
-            })
 
             var postBody =
                 "email=$email&source=$cardToken"
@@ -103,9 +100,6 @@ class StripeUtils(
             customerID = Jobject.getString("id")
             Log.e("----customerResponse----", "GeneratCustomerid" + Jobject)
         }.await()
-        activity.runOnUiThread(kotlinx.coroutines.Runnable {
-            hideProgressDialogStripe()
-        })
         return customerID
     }
 

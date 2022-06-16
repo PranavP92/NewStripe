@@ -49,7 +49,6 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                         setPositiveButton("OK",
                                             DialogInterface.OnClickListener { dialogInterface, i ->
                                                 dialogInterface.dismiss()
-                                                return@OnClickListener
                                             })
                                     }
                                 })
@@ -80,7 +79,6 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                         setPositiveButton("OK",
                                             DialogInterface.OnClickListener { dialogInterface, i ->
                                                 dialogInterface.dismiss()
-                                                return@OnClickListener
                                             })
                                     }
                                 })
