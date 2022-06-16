@@ -46,9 +46,6 @@ class StripeUtils(
         this.activity = activity
         var customerID: String = ""
         CoroutineScope(Dispatchers.IO).async {
-            activity.runOnUiThread(kotlinx.coroutines.Runnable {
-                showProgressDialogStripe(activity)
-            })
             val tokenId: String = generateCardtoken(activity, card)
             Log.e("----afterscope----", "GenerateCardtoken: " + tokenId)
             tokenGeneratedId = tokenId
@@ -63,9 +60,6 @@ class StripeUtils(
                 }
             }
         }.await()
-        activity.runOnUiThread(kotlinx.coroutines.Runnable {
-            hideProgressDialogStripe()
-        })
 
         return customerID
     }
@@ -112,9 +106,6 @@ class StripeUtils(
         this.activity = activity
         var customerID: String = ""
         CoroutineScope(Dispatchers.IO).async {
-            activity.runOnUiThread(kotlinx.coroutines.Runnable {
-                showProgressDialogStripe(activity)
-            })
             val tokenId: String = generateCardtoken(activity, card)
             Log.e("----afterscope----", "GenerateCardtoken: " + tokenId)
             tokenGeneratedId = tokenId
@@ -129,9 +120,6 @@ class StripeUtils(
             }
         }.await()
 
-        activity.runOnUiThread(kotlinx.coroutines.Runnable {
-            hideProgressDialogStripe()
-        })
         return customerID
     }
 
