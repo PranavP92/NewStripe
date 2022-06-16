@@ -199,15 +199,15 @@ class StripeUtils(
             val msg = error.get("message")
             val cardError = msg.toString() //app specified variable to store error massage
             this.error = cardError
-            activity.runOnUiThread(kotlinx.coroutines.Runnable {
-                showAlertDialogForstripe(activity) {
-                    setTitle("STRIPE")
-                    setCancelable(false)
-                    setMessage(cardError)
-                    positiveButton("OK") {
-                    }
-                }
-            })
+//            activity.runOnUiThread(kotlinx.coroutines.Runnable {
+//                showAlertDialogForstripe(activity) {
+//                    setTitle("STRIPE")
+//                    setCancelable(false)
+//                    setMessage(cardError)
+//                    positiveButton("OK") {
+//                    }
+//                }
+//            })
         } else if (Jobject.has("id")) {
             cardToken = Jobject.getString("id")
         }
