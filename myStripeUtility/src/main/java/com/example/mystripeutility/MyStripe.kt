@@ -1,6 +1,7 @@
 package com.example.mystripeutility
 
 import StripeUtils
+import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.util.Log
@@ -15,8 +16,8 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
     private val gson = Gson()
     private var isChanged = false
 
-    suspend fun addCardForNewUserOrExistingUser(
-        context: Context,
+     suspend fun addCardForNewUserOrExistingUser(
+        activity: Activity,
         card: CardObject,
         email: String,
         stripeCustomerId: String,
@@ -27,7 +28,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                 GlobalScope.launch {
                     suspend {
                         strCustomerId = stripeUtils.createStripeCustomerWithUserEmail(
-                            context,
+                            activity,
                             card,
                             email
                         )
@@ -36,14 +37,16 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
 
                         withContext(Dispatchers.Main) {
                             if (strCustomerId.equals("")) {
-                                stripeUtils.showAlertDialogForstripe(context) {
-                                    setTitle("ERROR..!!")
-                                    setMessage(stripeUtils.error)
-                                    setPositiveButton("OK",
-                                        DialogInterface.OnClickListener { dialogInterface, i ->
-                                            dialogInterface.dismiss()
-                                        })
-                                }
+                                activity.runOnUiThread(Runnable {
+                                    stripeUtils.showAlertDialogForstripe(activity) {
+                                        setTitle("ERROR..!!")
+                                        setMessage(stripeUtils.error)
+                                        setPositiveButton("OK",
+                                            DialogInterface.OnClickListener { dialogInterface, i ->
+                                                dialogInterface.dismiss()
+                                            })
+                                    }
+                                })
                             } else {
 
                             }
@@ -55,7 +58,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                     suspend {
                         strCustomerId =
                             stripeUtils.addNewCardToStripeCustomerWithCustomerID(
-                                context,
+                                activity,
                                 card,
                                 stripeCustomerId
                             )
@@ -63,14 +66,16 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                         Log.d("TAG", "onCreate: $strCustomerId")
                         withContext(Dispatchers.Main) {
                             if (strCustomerId.equals("")) {
-                                stripeUtils.showAlertDialogForstripe(context) {
-                                    setTitle("ERROR..!!")
-                                    setMessage(stripeUtils.error)
-                                    setPositiveButton("OK",
-                                        DialogInterface.OnClickListener { dialogInterface, i ->
-                                            dialogInterface.dismiss()
-                                        })
-                                }
+                                activity.runOnUiThread(Runnable {
+                                    stripeUtils.showAlertDialogForstripe(activity) {
+                                        setTitle("ERROR..!!")
+                                        setMessage(stripeUtils.error)
+                                        setPositiveButton("OK",
+                                            DialogInterface.OnClickListener { dialogInterface, i ->
+                                                dialogInterface.dismiss()
+                                            })
+                                    }
+                                })
                             } else {
 
                             }

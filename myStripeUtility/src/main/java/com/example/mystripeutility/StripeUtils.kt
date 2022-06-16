@@ -1,4 +1,5 @@
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
@@ -23,7 +24,10 @@ import org.json.JSONObject
 
 
 @SuppressLint("StaticFieldLeak")
-class StripeUtils(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SECRET_KEY: String) {
+class StripeUtils(
+    private val STRIPE_PUBLISHABLE_KEY: String,
+    private val STRIPE_SECRET_KEY: String,
+) {
     private var dialog: AlertDialog? = null
 
     val MY_STRIPE_PUBLISHABLE_KEY = this.STRIPE_PUBLISHABLE_KEY
@@ -33,18 +37,20 @@ class StripeUtils(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE
     val TOKENS = "tokens"
     var tokenGeneratedId: String = ""
     lateinit var context: Context
+    lateinit var activity: Activity
+
     var error = ""
 
 
     suspend fun createStripeCustomerWithUserEmail(
-        context: Context,
+        activity: Activity,
         card: CardObject,
-        email: String
+        email: String,
     ): String {
-        this.context = context
+        this.activity = activity
         var customerID: String = ""
         CoroutineScope(Dispatchers.IO).async {
-            val tokenId: String = generateCardtoken(card)
+            val tokenId: String = generateCardtoken(activity, card)
             Log.e("----afterscope----", "GenerateCardtoken: " + tokenId)
             tokenGeneratedId = tokenId
             withContext(Dispatchers.Main) {
@@ -97,14 +103,14 @@ class StripeUtils(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE
 
 
     suspend fun addNewCardToStripeCustomerWithCustomerID(
-        context: Context,
+        activity: Activity,
         card: CardObject,
-        stripeCustomerId: String
+        stripeCustomerId: String,
     ): String {
-        this.context = context
+        this.activity = activity
         var customerID: String = ""
         CoroutineScope(Dispatchers.IO).async {
-            val tokenId: String = generateCardtoken(card)
+            val tokenId: String = generateCardtoken(activity, card)
             Log.e("----afterscope----", "GenerateCardtoken: " + tokenId)
             tokenGeneratedId = tokenId
 
@@ -152,7 +158,7 @@ class StripeUtils(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE
 
 
     @SuppressLint("LogNotTimber")
-    private fun generateCardtoken(card: CardObject): String {
+    private fun generateCardtoken(activity: Activity, card: CardObject): String {
 
         var cardToken: String = ""
 
@@ -197,13 +203,15 @@ class StripeUtils(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE
             val msg = error.get("message")
             val cardError = msg.toString() //app specified variable to store error massage
             this.error = cardError
-            showAlertDialogForstripe(context){
-                setTitle("STRIPE")
-                setCancelable(false)
-                setMessage(cardError)
-                positiveButton("OK"){
+            activity.runOnUiThread(kotlinx.coroutines.Runnable {
+                showAlertDialogForstripe(activity) {
+                    setTitle("STRIPE")
+                    setCancelable(false)
+                    setMessage(cardError)
+                    positiveButton("OK") {
+                    }
                 }
-            }
+            })
         } else if (Jobject.has("id")) {
             cardToken = Jobject.getString("id")
         }
@@ -244,7 +252,7 @@ class StripeUtils(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE
     fun updateDefaultcardWithCustomerId(
         context: Context,
         cardToken: String,
-        customerId: String
+        customerId: String,
     ): Boolean {
         this.context = context
 
@@ -311,7 +319,7 @@ class StripeUtils(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE
         @SerializedName("object")
         val objectX: String,
         @SerializedName("url")
-        val url: String
+        val url: String,
     ) {
         data class Data(
             @SerializedName("address_city")
@@ -359,15 +367,18 @@ class StripeUtils(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE
             @SerializedName("object")
             val objectX: String,
             @SerializedName("tokenization_method")
-            val tokenizationMethod: Any
+            val tokenizationMethod: Any,
         ) {
             class Metadata
         }
     }
 
 
-    fun showAlertDialogForstripe(context: Context, dialogBuilder: AlertDialog.Builder.() -> Unit) {
-        val builder = AlertDialog.Builder(context)
+    fun showAlertDialogForstripe(
+        activity: Activity,
+        dialogBuilder: AlertDialog.Builder.() -> Unit,
+    ) {
+        val builder = AlertDialog.Builder(activity)
         builder.dialogBuilder()
         builder.setCancelable(false)
         val dialog = builder.create()
@@ -375,10 +386,10 @@ class StripeUtils(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE
         dialog.setOnShowListener {
 
             dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                .setTextColor(ContextCompat.getColor(context, R.color.green_400))
+                .setTextColor(ContextCompat.getColor(activity, R.color.green_400))
             dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(
                 ContextCompat.getColor(
-                    context,
+                    activity,
                     R.color.black
                 )
             )
