@@ -403,7 +403,6 @@ class StripeUtils(
 
 
     fun showProgressDialogStripe(context: Context) {
-        hideProgressDialogStripe()
         progressDialog = ProgressDialog(context)
         progressDialog.setTitle("STRIPE")
         progressDialog.setMessage("please wait....")
