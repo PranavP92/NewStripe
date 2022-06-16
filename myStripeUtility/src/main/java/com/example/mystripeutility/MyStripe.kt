@@ -25,9 +25,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
         var strCustomerId = ""
 
         CoroutineScope(Dispatchers.IO).async {
-            activity.runOnUiThread(Runnable {
-                stripeUtils.showProgressDialogStripe(activity)
-            })
+
             if (stripeCustomerId.equals("")) {
                 GlobalScope.launch {
                     suspend {
@@ -44,7 +42,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                 activity.runOnUiThread(Runnable {
 //                                    stripeUtils.hideProgressDialogStripe()
                                     stripeUtils.showAlertDialogForstripe(activity) {
-                                        setTitle("ERROR..!!")
+                                        setTitle("STRIPE..!!")
                                         setMessage(stripeUtils.error)
                                         setPositiveButton("OK",
                                             DialogInterface.OnClickListener { dialogInterface, i ->
@@ -74,7 +72,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                 activity.runOnUiThread(Runnable {
 //                                    stripeUtils.hideProgressDialogStripe()
                                     stripeUtils.showAlertDialogForstripe(activity) {
-                                        setTitle("ERROR..!!")
+                                        setTitle("STRIPE..!!")
                                         setMessage(stripeUtils.error)
                                         setPositiveButton("OK",
                                             DialogInterface.OnClickListener { dialogInterface, i ->
@@ -90,9 +88,6 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                 }
             }
         }.await()
-         activity.runOnUiThread(Runnable {
-             stripeUtils.hideProgressDialogStripe()
-         })
         return strCustomerId
     }
 
