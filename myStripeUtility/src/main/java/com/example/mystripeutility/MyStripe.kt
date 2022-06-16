@@ -23,6 +23,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
         stripeCustomerId: String,
     ): String {
         var strCustomerId = ""
+         stripeUtils.showProgressDialogStripe(activity)
         CoroutineScope(Dispatchers.IO).async {
             if (stripeCustomerId.equals("")) {
                 GlobalScope.launch {
@@ -38,6 +39,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                         withContext(Dispatchers.Main) {
                             if (strCustomerId.equals("")) {
                                 activity.runOnUiThread(Runnable {
+                                    stripeUtils.hideProgressDialogStripe()
                                     stripeUtils.showAlertDialogForstripe(activity) {
                                         setTitle("ERROR..!!")
                                         setMessage(stripeUtils.error)
@@ -67,6 +69,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                         withContext(Dispatchers.Main) {
                             if (strCustomerId.equals("")) {
                                 activity.runOnUiThread(Runnable {
+                                    stripeUtils.hideProgressDialogStripe()
                                     stripeUtils.showAlertDialogForstripe(activity) {
                                         setTitle("ERROR..!!")
                                         setMessage(stripeUtils.error)
@@ -84,6 +87,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                 }
             }
         }.await()
+         stripeUtils.hideProgressDialogStripe()
         return strCustomerId
     }
 

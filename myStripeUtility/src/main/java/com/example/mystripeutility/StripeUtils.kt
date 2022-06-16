@@ -3,16 +3,11 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import com.example.mystripeutility.CardObject
 import com.example.mystripeutility.R
 import com.google.gson.annotations.SerializedName
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -29,6 +24,7 @@ class StripeUtils(
     private val STRIPE_SECRET_KEY: String,
 ) {
     private var dialog: AlertDialog? = null
+    private lateinit var progressDialog: ProgressDialog
 
     val MY_STRIPE_PUBLISHABLE_KEY = this.STRIPE_PUBLISHABLE_KEY
     val MY_STRIPE_SECRET_KEY = this.STRIPE_SECRET_KEY
@@ -408,32 +404,32 @@ class StripeUtils(
 
     fun showProgressDialogStripe(context: Context) {
         hideProgressDialogStripe()
-        val progressDialog = ProgressDialog(context)
-        progressDialog.setTitle("Kotlin Progress Bar")
-        progressDialog.setMessage("Application is loading, please wait")
+        progressDialog = ProgressDialog(context)
+        progressDialog.setTitle("STRIPE")
+        progressDialog.setMessage("please wait....")
         progressDialog.show()
 
 
-        val builder = AlertDialog.Builder(context)
-        builder.setCancelable(false) // if you want user to wait for some process to finish,
-        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val v = inflater.inflate(R.layout.layout_loading_dialog, null)
-        builder.setView(v)
-        dialog = builder.create()
-        dialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog!!.window!!.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
-        dialog!!.show()
+//        val builder = AlertDialog.Builder(context)
+//        builder.setCancelable(false) // if you want user to wait for some process to finish,
+//        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+//        val v = inflater.inflate(R.layout.layout_loading_dialog, null)
+//        builder.setView(v)
+//        dialog = builder.create()
+//        dialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+//        dialog!!.window!!.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+//        dialog!!.show()
 
     }
 
     fun hideProgressDialogStripe() {
         if (isProgressDialogShownStripe())
-            dialog?.dismiss()
+            progressDialog?.dismiss()
     }
 
     fun isProgressDialogShownStripe(): Boolean {
-        if (dialog != null)
-            return dialog!!.isShowing
+        if (progressDialog != null)
+            return progressDialog!!.isShowing
         else
             return false
     }
