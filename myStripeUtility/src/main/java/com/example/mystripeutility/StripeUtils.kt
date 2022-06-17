@@ -58,7 +58,7 @@ class StripeUtils(
                     customerID = ""
                 } else {
                     val custId = apiCreateCustomerWithUserEmail(email, tokenGeneratedId)
-                    if (custId != "") {
+                    if (!custId .equals("")) {
                         customerID = custId
                     }
                 }
@@ -74,8 +74,6 @@ class StripeUtils(
     private suspend fun apiCreateCustomerWithUserEmail(email: String, cardToken: String): String {
         var customerID: String = ""
         CoroutineScope(Dispatchers.IO).async {
-
-
             var postBody =
                 "email=$email&source=$cardToken"
             val client = OkHttpClient().newBuilder()
@@ -98,7 +96,7 @@ class StripeUtils(
             val jsonData: String = responseData.body!!.string()
             val Jobject = JSONObject(jsonData)
             customerID = Jobject.getString("id")
-            Log.e("----customerResponse----", "GeneratCustomerid" + Jobject)
+            Log.e("----customerResponse----", "GeneratCustomerid" + customerID)
         }.await()
 
         return customerID
