@@ -22,7 +22,8 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
         card: CardObject,
         email: String,
         stripeCustomerId: String,
-    ): String {
+        checkCallBack: (String) -> Unit
+    ) {
         var strCustomerId = ""
 
         CoroutineScope(Dispatchers.IO).async {
@@ -58,6 +59,7 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                         "Card successfully added",
                                         Toast.LENGTH_SHORT).show()
                                 })
+                                checkCallBack(strCustomerId)
                             }
                         }
                     }.invoke()
@@ -93,13 +95,13 @@ class MyStripe(private val STRIPE_PUBLISHABLE_KEY: String, private val STRIPE_SE
                                         "Card successfully added",
                                         Toast.LENGTH_SHORT).show()
                                 })
+                                checkCallBack(strCustomerId)
                             }
                         }
                     }.invoke()
                 }
             }
         }.await()
-        return strCustomerId
     }
 
     fun getAddedCardList(activity: Activity,stripeCustomerId:String): List<StripeUtils.StripeCardData.Data> {
