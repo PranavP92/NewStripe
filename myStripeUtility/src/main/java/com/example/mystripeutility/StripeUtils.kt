@@ -124,7 +124,7 @@ class StripeUtils(
                     customerID = ""
                 } else {
                     apiCallForAddNewCardWithCustomerID(tokenGeneratedId, stripeCustomerId)
-                    customerID = "yes"
+                    customerID = stripeCustomerId
                 }
             }
         }.await()
